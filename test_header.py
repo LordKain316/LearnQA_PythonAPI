@@ -3,8 +3,7 @@ import requests
 class TestHeaders:
     def test_header(self):
         url = "https://playground.learnqa.ru/api/homework_header"
-        a = {"header": "11111222223333344444"}
-        response = requests.get(url, a)
+        response = requests.get(url)
 
         print(response)
         assert response.status_code == 200, "Wrong response status"
