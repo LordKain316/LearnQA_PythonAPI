@@ -1,9 +1,14 @@
+import time
+
 from lib.my_requests import MyRequests
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
+import allure
 
-
+@allure.epic("Tests for users")
+@allure.feature("Edit cases")
 class TestUserEdit(BaseCase):
+    @allure.description("This test checks created user can be edited")
     def test_edit_just_created_user(self):
         # register
         register_data = self.prepare_registration_data()
@@ -51,6 +56,7 @@ class TestUserEdit(BaseCase):
 
         print(response4.text)
 
+    @allure.description("This test unsuccessfully try edit user being unauthorized")
     def test_edit_user_unauthorized(self):
         response2 = MyRequests.put(
             f"/user/101623",
@@ -60,6 +66,7 @@ class TestUserEdit(BaseCase):
         Assertions.assert_code_status(response2, 400)
         assert response2.text == '{"error":"Auth token not supplied"}'
 
+    @allure.description("This test checks that you cannot edit another user")
     def test_edit_user_as_different_user(self):
         # Register first user
         register_data1 = self.prepare_registration_data()
@@ -69,6 +76,7 @@ class TestUserEdit(BaseCase):
         Assertions.assert_json_has_key(response1, "id")
 
         user_id1 = self.get_json_value(response1, "id")  # получает ID первого пользователя
+        time.sleep(2)
 
         # Register second user
         register_data2 = self.prepare_registration_data()
@@ -101,6 +109,7 @@ class TestUserEdit(BaseCase):
         Assertions.assert_code_status(response4, 400)
         assert response4.text == '{"error":"This user can only edit their own data."}'
 
+    @allure.description("This test checks that yot can't use invalid mail for edit user")
     def test_edit_user_invalid_email(self):
         # Register user
         register_data = self.prepare_registration_data()
@@ -135,6 +144,7 @@ class TestUserEdit(BaseCase):
         assert response3.text == '{"error":"Invalid email format"}'
 
 
+    @allure.description("This test checks that can't use too short name for edit user")
     def test_edit_user_short_name(self):
         # Register a user
         register_data = self.prepare_registration_data()

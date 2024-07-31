@@ -1,7 +1,10 @@
 from lib.my_requests import MyRequests
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
+import allure
 
+@allure.epic("Tests for users")
+@allure.feature("Get cases")
 class TestUserGet(BaseCase):
     def setup_method(self):
         self.data = {
@@ -9,6 +12,7 @@ class TestUserGet(BaseCase):
             'password': '1234'
         }
 
+    @allure.description("This test ckecks that you can get only name being unauthorized")
     def test_get_user_details_not_auth(self):
         response = MyRequests.get("/user/2")
 
@@ -17,6 +21,7 @@ class TestUserGet(BaseCase):
         Assertions.assert_json_has_not_key(response, "firstName")
         Assertions.assert_json_has_not_key(response, "lastName")
 
+    @allure.description("This test checks that you can get all details of user being authorized him")
     def test_get_user_details_auth_as_same_user(self):
 
         response1 = MyRequests.post("/user/login/", data=self.data)
@@ -31,6 +36,7 @@ class TestUserGet(BaseCase):
         expected_fields = ["username", "email", "firstName", "lastName"]
         Assertions.assert_json_has_keys(response2, expected_fields)
 
+    @allure.description("This test checks that you can't get users details being login another user")
     def test_get_user_details_auth_as_different_user(self):
         response1 = MyRequests.post("/user/login/", data=self.data)
         auth_sid = self.get_cookie(response1, "auth_sid")
